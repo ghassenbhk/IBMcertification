@@ -1,0 +1,4 @@
+make_graph(tesla_data, tesla_revenue, 'Tesla') #question 5
+
+
+make_graph(gme_data, gme_revenue, 'GameStop')  #question6
