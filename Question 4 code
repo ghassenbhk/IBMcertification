@@ -1,0 +1,35 @@
+#!pip install pandas==1.3.3
+#!pip install requests==2.26.0
+!mamba install bs4==4.10.0 -y
+!mamba install html5lib==1.1 -y
+!pip install lxml==4.6.4
+#!pip install plotly==5.3.1
+
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+
+url = " https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0220EN-SkillsNetwork/labs/project/stock.html"
+html_data  = requests.get(url).text
+soup = BeautifulSoup(html_data, 'html5lib')
+
+gme_revenue = pd.DataFrame(columns=["Date","Revenue"])
+
+# First we isolate the body of the table which contains all the information
+# Then we loop through each row and find all the column values for each row
+for row in soup.find("tbody").find_all('tr'):
+    col = row.find_all("td")
+    date = col[0].text
+    revenue = col[1].text   
+    # Finally we append the data of each row to the table
+    gme_revenue = gme_revenue.append({"Date":date,"Revenue":revenue}, ignore_index=True) 
+    
+gme_revenue["Revenue"] = gme_revenue['Revenue'].str.replace(',|\$',"")
+
+gme_revenue.dropna(inplace=True)
+
+gme_revenue = gme_revenue[gme_revenue['Revenue'] != ""]
+
+gme_revenue.head()
+
+print(gme_revenue.tail(5)) # last 5 rows 
